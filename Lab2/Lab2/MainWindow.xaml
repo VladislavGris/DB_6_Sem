@@ -83,7 +83,7 @@
                             <RowDefinition Height=".5*"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="Расположение" TextWrapping="Wrap" Grid.Column="0" Grid.Row="0" FontSize="18" VerticalAlignment="Center"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Height="22" FontSize="16" Text="{Binding SelectedStorage.Location}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" FontSize="16" Text="{Binding SelectedStorage.Location}" Grid.RowSpan="2" TextWrapping="Wrap" Margin="5"/>
                         <Button Content="Обновить" Grid.Column="0" Grid.Row="2" Background="Yellow" Command="{Binding UpdateStorageCommand}" FontSize="16" Margin="5 0"/>
                     </Grid>
                 </Grid>
@@ -200,6 +200,48 @@
             </Grid>
         </TabItem>
         <TabItem Header="Типы продукции">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <ListBox Margin="7,7,7,7" 
+                         ItemsSource="{Binding ProductTypeRepo.Items}"
+                         Grid.Column="0"
+                         SelectedItem="{Binding SelectedProductType}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="X" Foreground="White"
+                                            Background="Red"
+                                        Width="20" 
+                                        Margin="0 0 10 0"
+                                        Command="{Binding DataContext.DeleteProductTypeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                                        CommandParameter="{Binding Id}"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Grid Grid.Column="1" Background="White" Margin="7">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="7*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Тип" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10 0 0 0" FontSize="22"/>
+                    <TextBlock Text="Тип" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Margin="10 0 0 0" FontSize="22"/>
+                    <TextBox Text="{Binding SelectedProductType.Name}" Grid.Row="0" Grid.Column="1" Height="30" Margin="5 0" FontSize="22"/>
+                    <TextBox Text="{Binding ToAddType.Name}" Grid.Row="2" Grid.Column="1" Height="30" Margin="5 0" FontSize="22"/>
+                    <Button Content="Обновить" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="50 30" FontSize="22" Background="Yellow" Command="{Binding UpdateProductTypeCommand}"/>
+                    <Button Content="Добавить" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="50 30" FontSize="22" Background="LightGreen" Command="{Binding AddProductTypeCommand}"/>
+                </Grid>
+            </Grid>
 
         </TabItem>
     </TabControl>

@@ -234,6 +234,7 @@ as
 begin
 	set nocount on;
 	insert into ProductTypes(type_name)
+	output Inserted.Id
 	values (@type);
 end;
 go
@@ -379,9 +380,12 @@ create procedure GetStoredProducts
 as
 begin
 	set nocount on;
-	select p.id, p.customer_id, p.type_id, p.name, p.count, p.weight, sp.storage_id
-	from StoredProducts p inner join Storages_StoredProducts sp on p.id = sp.product_id;
+	select p.id, p.customer_id, c.name, p.type_id, pt.type_name, p.name, p.count, p.weight, sp.storage_id
+	from StoredProducts p inner join Storages_StoredProducts sp on p.id = sp.product_id
+	inner join Customers c on c.id = p.id
+	inner join ProductTypes pt on pt.id = p.type_id;
 end;
+
 go
 create procedure CheckTariffRateId @id int
 as

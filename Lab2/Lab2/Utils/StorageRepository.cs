@@ -60,7 +60,6 @@ namespace Lab2.Utils
                 {
                     MessageBox.Show(ex.Message);
                 }
-                
             }
         }
 
@@ -127,12 +126,12 @@ namespace Lab2.Utils
                 try
                 {
                     item.FreeSpace = (double)_updateCommand.ExecuteScalar();
+                    MessageBox.Show("Склад обновлен");
                 }
                 catch (SqlException ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-
             }
         }
 

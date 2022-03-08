@@ -86,6 +86,17 @@ namespace Lab2.ViewModels
         #endregion
         #endregion
         #region StorageProperties
+        #region StorageRepository
+
+        private StorageRepository _storageRepository;
+
+        public StorageRepository StorageRepository
+        {
+            get => _storageRepository;
+            set => Set(ref _storageRepository, value);
+        }
+
+        #endregion
         #region SelectedStorage
 
         private Storage _selectedStorage = new Storage();
@@ -148,18 +159,7 @@ namespace Lab2.ViewModels
 
         #endregion
         #endregion
-
-        #region ProductRepository
-
-        private ProductRepository _productRepo;
-
-        public ProductRepository ProductRepo
-        {
-            get => _productRepo;
-            set => Set(ref _productRepo, value);
-        }
-
-        #endregion
+        #region ProductTypeProperties
         #region ProductTypeRepository
 
         private ProductTypeRepository _productTypeRepo;
@@ -171,25 +171,77 @@ namespace Lab2.ViewModels
         }
 
         #endregion
-        #region StorageRepository
+        #region SelectedProductType
 
-        private StorageRepository _storageRepository;
+        private ProductType _selectedProductType = new ProductType();
 
-        public StorageRepository StorageRepository
+        public ProductType SelectedProductType
         {
-            get => _storageRepository;
-            set => Set(ref _storageRepository, value);
+            get => _selectedProductType;
+            set => Set(ref _selectedProductType, value);
         }
 
         #endregion
-        #region TariffRateRepository
+        #region ToAddType
 
-        private TariffRateRepository _tariffRateRepo;
+        private ProductType _toAddType = new ProductType();
 
-        public TariffRateRepository TariffRateRepo
+        public ProductType ToAddType
         {
-            get => _tariffRateRepo;
-            set => Set(ref _tariffRateRepo, value);
+            get => _toAddType;
+            set => Set(ref _toAddType, value);
+        }
+
+        #endregion
+        #endregion
+        #region ProductTypeCommands
+        #region UpdateProductTypeCommand
+
+        public ICommand UpdateProductTypeCommand { get; }
+
+        private bool CanUpdateProductTypeCommandExecute(object p) => SelectedProductType?.Id != 0 && !string.IsNullOrEmpty(SelectedProductType?.Name);
+
+        private void OnUpdateProductTypeCommandExecuted(object p)
+        {
+            ProductTypeRepo.Update(SelectedProductType);
+        }
+
+        #endregion
+        #region AddProductTypeCommand
+
+        public ICommand AddProductTypeCommand { get; }
+
+        private bool CanAddProductTypeCommandExecute(object p) => !string.IsNullOrEmpty(ToAddType?.Name);
+
+        private void OnAddProductTypeCommandExecuted(object p)
+        {
+            ProductTypeRepo.Insert(ToAddType);
+            ToAddType = new ProductType();
+        }
+
+        #endregion
+        #region DeleteProductTypeCommand
+
+        public ICommand DeleteProductTypeCommand { get; }
+
+        private bool CanDeleteProductTypeCommandExecute(object p) => true;
+
+        private void OnDeleteProductTypeCommandExecuted(object p)
+        {
+            ProductTypeRepo.Remove((int)p);
+        }
+
+        #endregion
+        #endregion
+
+        #region ProductRepository
+
+        private ProductRepository _productRepo;
+
+        public ProductRepository ProductRepo
+        {
+            get => _productRepo;
+            set => Set(ref _productRepo, value);
         }
 
         #endregion
@@ -206,13 +258,19 @@ namespace Lab2.ViewModels
             AddStorageCommand = new LambdaCommand(OnAddStorageCommandExecuted, CanAddStorageCommandExecute);
             DeleteStorageCommand = new LambdaCommand(OnDeleteStorageCommandExecuted, CanDeleteStorageCommandExecute);
             #endregion
-
+            #region ProductTypeCommands
+            UpdateProductTypeCommand = new LambdaCommand(OnUpdateProductTypeCommandExecuted, CanUpdateProductTypeCommandExecute);
+            AddProductTypeCommand = new LambdaCommand(OnAddProductTypeCommandExecuted, CanAddProductTypeCommandExecute);
+            DeleteProductTypeCommand = new LambdaCommand(OnDeleteProductTypeCommandExecuted, CanDeleteProductTypeCommandExecute);
+            #endregion
             SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
             CustomerRepo = new CustomerRepository(connection);
             StorageRepository = new StorageRepository(connection);
+            ProductTypeRepo = new ProductTypeRepository(connection);
             CustomerRepo.Get();
             StorageRepository.Get();
+            ProductTypeRepo.Get();
         }
 
     }
