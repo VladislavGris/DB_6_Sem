@@ -18,7 +18,7 @@ exec GetProductsByStorage 5;
 go
 exec AddStoredProduct 2,3,5,'Молоко',10,1;
 exec UpdateStoredProduct 1,1,1,1,'Молоко',10,1;
-exec RemoveStoredProduct 8;
+exec RemoveStoredProduct 10;
 exec GetStoredProducts;
 go
 exec AddTariffRate 1,0.5,0,1;

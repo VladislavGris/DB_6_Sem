@@ -324,6 +324,18 @@ begin
 end;
 drop procedure AddStoredProduct
 go
+create function CalculateCurrentSpace(@id int)
+returns float
+as
+begin
+	declare @currentSpace float, @currCount int, @currWeight float;
+	select top 1 @currCount = count, @currWeight = weight
+	from StoredProducts
+	where id = @id;
+	select @currentSpace = @currCount*@currWeight;
+	return @currentSpace;
+end
+go
 create procedure UpdateStoredProduct	@id int,
 										@customerId int,
 										@typeId int,
@@ -339,11 +351,8 @@ begin
 	exec StorageIdCheck @storageId;
 	exec CheckStoredProductId @id;
 
-	declare @currentSpace float, @currCount int, @currWeight float;
-	select top 1 @currCount = count, @currWeight = weight
-	from StoredProducts
-	where id = @id;
-	select @currentSpace = @currCount*@currWeight;
+	declare @currentSpace float;
+	select @currentSpace = dbo.CalculateCurrentSpace(@id);
 
 	declare @spaceDiff float = @currentSpace - (@count*@weight);
 	print @spaceDiff
@@ -367,6 +376,7 @@ begin
 	from Storages
 	where id = @storageId;
 end;
+drop procedure UpdateStoredProduct
 go
 create procedure RemoveStoredProduct @id int
 as
