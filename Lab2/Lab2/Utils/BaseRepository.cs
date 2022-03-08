@@ -10,7 +10,7 @@ namespace Lab2.Utils
         abstract protected string RemoveProcedure { get; }
         abstract protected string GetProcedure { get; }
 
-        private SqlConnection _connection;
+        protected SqlConnection _connection;
         protected SqlCommand _insertCommand;
         protected SqlCommand _updateCommand;
         protected SqlCommand _removeCommand;

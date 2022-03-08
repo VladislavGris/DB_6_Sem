@@ -117,8 +117,7 @@ namespace Lab2.Utils
                 };
                 _insertCommand.Parameters.Add(nameParam);
                 _insertCommand.Parameters.Add(contactDataParam);
-                var id = _insertCommand.ExecuteScalar();
-                entity.Id = (int)id;
+                entity.Id = (int)_insertCommand.ExecuteScalar();
                 _customers.Add(entity);
             }
         }

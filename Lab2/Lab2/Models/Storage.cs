@@ -4,7 +4,7 @@
     {
         public string Location { get; set; }
         public int Capacity { get; set; }
-        public float FreeSpace { get; set; }
+        public double FreeSpace { get; set; }
 
         public Storage()
         {
@@ -13,11 +13,16 @@
             FreeSpace = 0;
         }
 
-        public Storage(string location, int capacity, float freeSpace)
+        public Storage(string location, int capacity, double freeSpace)
         {
             Location = location;
             Capacity = capacity;
             FreeSpace = freeSpace;
+        }
+
+        public Storage(int id, string location, int capacity, double freeSpace):this(location, capacity, freeSpace)
+        {
+            Id = id;
         }
     }
 }

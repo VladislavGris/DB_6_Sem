@@ -1,8 +1,8 @@
 use Storages;
 go
 exec AddStorage 'г.Минск', 100,100;
-exec UpdateStorages 1, 'г.Минск, пр-т.Партизанский',100,100;
-exec RemoveStorage 1;
+exec UpdateStorages 5, 'г.Минск, пр-т.Партизанский',600;
+exec RemoveStorage 3;
 exec GetStorages;
 go
 exec AddCustomer 'Иванов Иван Иванович11', 'email: iavnov@gmai.com, tel: +375291234567';

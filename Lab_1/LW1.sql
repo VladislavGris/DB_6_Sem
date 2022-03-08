@@ -86,13 +86,14 @@ end;
 go
 create procedure AddStorage @location nvarchar(300),
 							@capacity int,
-							@freeSpace int
+							@freeSpace float
 as
 begin
 	set nocount on;
 	begin try
 		exec StorageCapacityCheck @capacity, @freeSpace;
 		insert into Storages(location, capacity, free_space)
+		output Inserted.Id
 		values (@location,@capacity,@freeSpace);
 	end try
 	begin catch
@@ -119,24 +120,42 @@ end;
 go
 create procedure UpdateStorages @id int,
 								@location nvarchar(300),
-								@capacity int,
-								@freeSpace int
+								@capacity int
 as
 begin
 	set nocount on;
 	begin try
-		exec StorageCapacityCheck @capacity, @freeSpace;
 		exec StorageIdCheck @id;
 		update Storages
 		set location = @location,
-		capacity = @capacity,
-		free_space = @freeSpace;
+		capacity = @capacity
+		where id = @id;
 	end try
 	begin catch
 		print error_message();
 		throw;
 	end catch
 end;
+
+go
+create trigger UpdateStorageFreeSpace
+on Storages
+after update
+as
+begin
+	declare @old int, @new int, @id int;
+	select top 1 @old = capacity, @id = id
+	from Deleted;
+	select top 1 @new = capacity
+	from Inserted;
+	update Storages
+	set free_space = free_space - (@old - @new)
+	where id = @id;
+	select free_space
+	from Storages
+	where id = @id;
+end;
+drop trigger UpdateStorageFreeSpace
 go
 create procedure GetStorages 
 as
