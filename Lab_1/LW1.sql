@@ -148,12 +148,16 @@ begin
 	from Deleted;
 	select top 1 @new = capacity
 	from Inserted;
-	update Storages
-	set free_space = free_space - (@old - @new)
-	where id = @id;
-	select free_space
-	from Storages
-	where id = @id;
+	if @old <> @new
+	begin
+		update Storages
+		set free_space = free_space - (@old - @new)
+		where id = @id;
+		select free_space
+		from Storages
+		where id = @id;
+	end
+
 end;
 drop trigger UpdateStorageFreeSpace
 go
@@ -314,7 +318,11 @@ begin
 	update Storages
 	set free_space = free_space - @needSpace
 	commit;
+	select top 1 free_space, @isertedProductId
+	from Storages
+	where id = @storageId;
 end;
+drop procedure AddStoredProduct
 go
 create procedure UpdateStoredProduct	@id int,
 										@customerId int,
@@ -355,6 +363,9 @@ begin
 	set free_space = free_space + @spaceDiff
 	where id = @storageId;
 	commit;
+	select top 1 free_space
+	from Storages
+	where id = @storageId;
 end;
 go
 create procedure RemoveStoredProduct @id int
@@ -374,7 +385,11 @@ begin
 	delete Storages_StoredProducts
 	where product_id = @id;
 	commit
+	select top 1 free_space
+	from Storages
+	where id = @storageId;
 end;
+drop procedure RemoveStoredProduct
 go
 create procedure GetStoredProducts
 as
@@ -382,10 +397,20 @@ begin
 	set nocount on;
 	select p.id, p.customer_id, c.name, p.type_id, pt.type_name, p.name, p.count, p.weight, sp.storage_id
 	from StoredProducts p inner join Storages_StoredProducts sp on p.id = sp.product_id
-	inner join Customers c on c.id = p.id
+	inner join Customers c on c.id = p.customer_id
 	inner join ProductTypes pt on pt.id = p.type_id;
 end;
-
+go
+create procedure GetProductsByStorage @storageId int
+as
+begin
+	set nocount on;
+	select p.id, p.customer_id, c.name, p.type_id, pt.type_name, p.name, p.count, p.weight, sp.storage_id
+	from StoredProducts p inner join Storages_StoredProducts sp on p.id = sp.product_id
+	inner join Customers c on c.id = p.customer_id
+	inner join ProductTypes pt on pt.id = p.type_id
+	where sp.storage_id = @storageId;
+end;
 go
 create procedure CheckTariffRateId @id int
 as

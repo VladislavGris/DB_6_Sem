@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Lab2.ViewModels"
         xmlns:ext="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:ie="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:Lab2"
         mc:Ignorable="d"
         Title="Storage" Height="450" Width="650">
@@ -28,6 +29,11 @@
                          ItemsSource="{Binding StorageRepository.Items}"
                          Grid.Row="0"
                          SelectedItem="{Binding SelectedStorage}">
+                        <ie:Interaction.Triggers>
+                            <ie:EventTrigger EventName="SelectionChanged">
+                                <ie:InvokeCommandAction Command="{Binding DataContext.StorageSelectionChangedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                            </ie:EventTrigger>
+                        </ie:Interaction.Triggers>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -47,7 +53,7 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Grid.Row="1">
                                         <TextBlock Text=" Вместимость:"/>
-                                        <TextBlock Text="{Binding FreeSpace}"/>
+                                        <TextBlock Text="{Binding FreeSpace, UpdateSourceTrigger=PropertyChanged}"/>
                                         <TextBlock Text="/"/>
                                         <TextBlock Text="{Binding Capacity}"/>
                                     </StackPanel>
@@ -92,38 +98,85 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
                     <ListBox Margin="7" 
-                         ItemsSource="{Binding StorageRepository.Items}"
+                         ItemsSource="{Binding ProductRepo.Items}"
                          Grid.Row="0"
-                         SelectedItem="{Binding SelectedStorage}">
+                         SelectedItem="{Binding SelectedProduct}"
+                             Grid.ColumnSpan="2">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                        <Button Content="X" Foreground="White"
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="X" Foreground="White"
                                             Background="Red"
                                         Width="20" 
                                         Margin="0 0 10 0"
-                                        Command="{Binding DataContext.DeleteStorageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                                        Command="{Binding DataContext.DeleteProductCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
                                         CommandParameter="{Binding Id}"/>
-                                        <TextBlock Text="{Binding Location}"/>
-
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Grid.Row="1">
-                                        <TextBlock Text=" Вместимость:"/>
-                                        <TextBlock Text="{Binding FreeSpace}"/>
-                                        <TextBlock Text="/"/>
-                                        <TextBlock Text="{Binding Capacity}"/>
-                                    </StackPanel>
-                                </Grid>
-
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <StackPanel Grid.Row="1" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Клиент" Margin="5 0 10 0"/>
+                            <ComboBox ItemsSource="{Binding CustomerRepo.Customers}" Width="100"
+                                      SelectedItem="{Binding InsertedCustomer}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Тип" Margin="5 0 10 0"/>
+                            <ComboBox ItemsSource="{Binding ProductTypeRepo.Items}" Width="100"
+                                      SelectedItem="{Binding InsertedProductType}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Название" Margin="5 0 10 0"/>
+                            <TextBox Text="{Binding InsertedName}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Количество" Margin="5 0 10 0"/>
+                            <ext:IntegerUpDown Value="{Binding InsertedCount}" Minimum="1"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Вес" Margin="5 0 10 0"/>
+                            <ext:DoubleUpDown Value="{Binding InsertedWeight}" Minimum="0"/>
+                        </StackPanel>
+                        <Button Content="Добавить" Background="LightGreen" Margin="10 0" Command="{Binding AddProductCommand}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Название" Margin="5 0 10 0"/>
+                            <TextBox Text="{Binding SelectedProduct.Name}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Количество" Margin="5 0 10 0"/>
+                            <ext:IntegerUpDown Value="{Binding SelectedProduct.Count}" Minimum="1"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Вес" Margin="5 0 10 0"/>
+                            <ext:DoubleUpDown Value="{Binding SelectedProduct.Weight}" Minimum="0"/>
+                        </StackPanel>
+                        <Button Content="Обновить" Background="LightGreen" Margin="10 0" Command="{Binding UpdateProductCommand}"/>
+                    </StackPanel>
                 </Grid>
             </Grid>
         </TabItem>

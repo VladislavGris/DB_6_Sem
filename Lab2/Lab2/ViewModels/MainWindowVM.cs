@@ -2,6 +2,7 @@
 using Lab2.Utils;
 using Lab2.Utils.Commands;
 using Lab2.ViewModels.Base;
+using System.Linq;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Windows.Input;
@@ -233,7 +234,7 @@ namespace Lab2.ViewModels
 
         #endregion
         #endregion
-
+        #region ProductProperties
         #region ProductRepository
 
         private ProductRepository _productRepo;
@@ -242,6 +243,147 @@ namespace Lab2.ViewModels
         {
             get => _productRepo;
             set => Set(ref _productRepo, value);
+        }
+
+        #endregion
+        #region SelectedProduct
+
+        private Product _selectedProduct = new Product();
+
+        public Product SelectedProduct
+        {
+            get => _selectedProduct;
+            set => Set(ref _selectedProduct, value);
+        }
+
+        #endregion
+        #region ToAddProduct
+
+        private Product _toAddProduct = new Product();
+
+        public Product ToAddProduct
+        {
+            get => _toAddProduct;
+            set => Set(ref _toAddProduct, value);
+        }
+
+        #endregion
+        #region InsertedCustomer
+
+        private Customer _insertedCustomer = new Customer();
+
+        public Customer InsertedCustomer
+        {
+            get => _insertedCustomer;
+            set => Set(ref _insertedCustomer, value);
+        }
+
+        #endregion
+        #region InsertedProductType
+
+        private ProductType _insertedProductType = new ProductType();
+
+        public ProductType InsertedProductType
+        {
+            get => _insertedProductType;
+            set => Set(ref _insertedProductType, value);
+        }
+
+        #endregion
+        #region InsertedName
+
+        private string _insertedName = "";
+
+        public string InsertedName
+        {
+            get => _insertedName;
+            set => Set(ref _insertedName, value);
+        }
+
+        #endregion
+        #region InsertedCount
+
+        private int _insertedCount;
+
+        public int InsertedCount
+        {
+            get => _insertedCount;
+            set => Set(ref _insertedCount, value);
+        }
+
+        #endregion
+        #region InsertedWeight
+
+        private double _insertedWeight;
+
+        public double InsertedWeight
+        {
+            get => _insertedWeight;
+            set => Set(ref _insertedWeight, value);
+        }
+
+        #endregion
+        #endregion
+        #region ProductCommands
+        #region UpdateProductCommand
+
+        public ICommand UpdateProductCommand { get; }
+
+        private bool CanUpdateProductCommandExecute(object p) => SelectedProduct?.Id != 0;
+
+        private void OnUpdateProductCommandExecuted(object p)
+        {
+            double freeSpace = ProductRepo.Update(SelectedProduct);
+            if(freeSpace != -1)
+            {
+                SelectedStorage.FreeSpace = freeSpace;
+            }
+        }
+
+        #endregion
+        #region AddProductCommand
+
+        public ICommand AddProductCommand { get; }
+
+        private bool CanAddProductCommandExecute(object p) => !string.IsNullOrEmpty(InsertedName) && InsertedCount != 0 && InsertedWeight != 0 && InsertedCustomer != null && InsertedProductType != null && SelectedStorage!=null;
+
+        private void OnAddProductCommandExecuted(object p)
+        {
+            double free_space = ProductRepo.Insert(new Product(InsertedCustomer.Id, InsertedCustomer.Name, InsertedProductType.Id, InsertedProductType.Name, InsertedName, InsertedCount, InsertedWeight, SelectedStorage.Id));
+            if(free_space != -1)
+            {
+                SelectedStorage.FreeSpace = free_space;
+            }
+
+        }
+
+        #endregion
+        #region DeleteProductCommand
+
+        public ICommand DeleteProductCommand { get; }
+
+        private bool CanDeleteProductCommandExecute(object p) => true;
+
+        private void OnDeleteProductCommandExecuted(object p)
+        {
+            double freeSpace = ProductRepo.Remove((int)p);
+            if (freeSpace != -1)
+            {
+                SelectedStorage.FreeSpace = freeSpace;
+            }
+        }
+
+        #endregion
+        #endregion
+        #region StorageSelectionChangedCommand
+
+        public ICommand StorageSelectionChangedCommand { get; }
+
+        private bool CanStorageSelectionChangedCommandExecute(object p) => SelectedStorage != null;
+
+        private void OnStorageSelectionChangedCommandExecuted(object p)
+        {
+            ProductRepo.Get(SelectedStorage.Id);
         }
 
         #endregion
@@ -263,11 +405,18 @@ namespace Lab2.ViewModels
             AddProductTypeCommand = new LambdaCommand(OnAddProductTypeCommandExecuted, CanAddProductTypeCommandExecute);
             DeleteProductTypeCommand = new LambdaCommand(OnDeleteProductTypeCommandExecuted, CanDeleteProductTypeCommandExecute);
             #endregion
+            #region ProductCommands
+            UpdateProductCommand = new LambdaCommand(OnUpdateProductCommandExecuted, CanUpdateProductCommandExecute);
+            AddProductCommand = new LambdaCommand(OnAddProductCommandExecuted, CanAddProductCommandExecute);
+            DeleteProductCommand = new LambdaCommand(OnDeleteProductCommandExecuted, CanDeleteProductCommandExecute);
+            #endregion
+            StorageSelectionChangedCommand = new LambdaCommand(OnStorageSelectionChangedCommandExecuted, CanStorageSelectionChangedCommandExecute);
             SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
             CustomerRepo = new CustomerRepository(connection);
             StorageRepository = new StorageRepository(connection);
             ProductTypeRepo = new ProductTypeRepository(connection);
+            ProductRepo = new ProductRepository(connection);
             CustomerRepo.Get();
             StorageRepository.Get();
             ProductTypeRepo.Get();

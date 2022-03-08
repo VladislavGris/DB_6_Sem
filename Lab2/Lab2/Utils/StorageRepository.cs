@@ -45,7 +45,7 @@ namespace Lab2.Utils
                 SqlParameter freeSpaceParam = new SqlParameter
                 {
                     ParameterName = "@freeSpace",
-                    Value = (float)entity.Capacity
+                    Value = entity.Capacity
                 };
                 _insertCommand.Parameters.Add(locationParam);
                 _insertCommand.Parameters.Add(capacityParam);
@@ -125,7 +125,11 @@ namespace Lab2.Utils
                 _updateCommand.Parameters.Add(capacityParam);
                 try
                 {
-                    item.FreeSpace = (double)_updateCommand.ExecuteScalar();
+                    var fSpace = _updateCommand.ExecuteScalar();
+                    if(fSpace != null)
+                    {
+                        item.FreeSpace = (double)fSpace;
+                    }
                     MessageBox.Show("Склад обновлен");
                 }
                 catch (SqlException ex)

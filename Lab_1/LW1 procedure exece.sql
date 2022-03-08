@@ -14,10 +14,11 @@ exec AddProductType 'Продукты питания';
 exec UpdateProductType 1, 'Продукт питания';
 exec RemoveProductType 1;
 exec GetProductTypes;
+exec GetProductsByStorage 5;
 go
-exec AddStoredProduct 1,1,1,'Молоко',10,1;
+exec AddStoredProduct 2,3,5,'Молоко',10,1;
 exec UpdateStoredProduct 1,1,1,1,'Молоко',10,1;
-exec RemoveStoredProduct 3;
+exec RemoveStoredProduct 8;
 exec GetStoredProducts;
 go
 exec AddTariffRate 1,0.5,0,1;
