@@ -26,3 +26,4 @@ exec AddTariffRate 1,1.2,1,5;
 exec UpdateTariffRate 1,0.5,0,1;
 exec RemoveTariffRate 2;
 exec GetTariffRates;
+exec GetProductTypes

@@ -34,9 +34,13 @@ go
 alter table StoredProducts
 add constraint fk_StoredProducts_ProductTypes
 foreign key (type_id) references ProductTypes(id) on delete no action;
+create index SPProductIdx 
+on StoredProducts(type_id);
 alter table StoredProducts
 add constraint fk_StoredProducts_Customers
 foreign key(customer_id) references Customers(id) on delete no action;
+create index SPCustomerIdx
+on StoredProducts(customer_id);
 go
 create table Storages_StoredProducts(
 id int primary key identity(1,1),
@@ -47,9 +51,13 @@ go
 alter table Storages_StoredProducts
 add constraint fk_Storages
 foreign key(storage_id) references Storages(id) on delete cascade;
+create index SSPStorageIdx
+on Storages_StoredProducts(storage_id);
 alter table Storages_StoredProducts
 add constraint fk_Products
 foreign key(product_id) references StoredProducts(id) on delete cascade;
+create index SSPProductIdx
+on Storages_StoredProducts(product_id);
 go
 create table TariffRates(
 id int primary key identity(1,1),
@@ -62,6 +70,8 @@ go
 alter table TariffRates
 add constraint fk_TariffRates_Storages
 foreign key(storage_id) references Storages(id) on delete no action;
+create index TRIdx
+on TariffRates(storage_id);
 go
 create procedure StorageCapacityCheck	@capacity int,
 										@freeSpace int

@@ -91,6 +91,7 @@ namespace Lab2.Utils
                 try
                 {
                     _updateCommand.ExecuteNonQuery();
+                    MessageBox.Show("Потребитель обновлен");
                 }
                 catch(SqlException ex)
                 {
