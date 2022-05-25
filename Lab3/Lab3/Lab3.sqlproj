@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="WriteProcedure.cs" />
     <Compile Include="StorageType.cs" />
+    <Compile Include="SendMail.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />

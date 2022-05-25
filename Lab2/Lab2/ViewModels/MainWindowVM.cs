@@ -11,7 +11,7 @@ namespace Lab2.ViewModels
 {
     internal class MainWindowVM : ViewModelBase
     {
-        private string _connectionString = "Server=DESKTOP-LRSVKUO;Database=Storages;Trusted_Connection=True;Encrypt=false;";
+        private string _connectionString = "Server=DESKTOP-LRSVKUO;Database=StoragesTest;Trusted_Connection=True;Encrypt=false;";
         #region CustomerProperties
         #region CustomerRepository
 

@@ -6,9 +6,9 @@ SendEmail("<h1>MESSSAGE</h1>");
 //WriteToFile("G:\\data.txt", "data");
 static void SendEmail(string htmlString)
 {
-    const string smtp_account = "vlad-0503@tut.by";
-    const string smtp_password = "iygmsliccdxlltde";
-    const string smtp_reciever = "vlad-0503@tut.by";
+    const string smtp_account = "vladislav.grishkevich@outlook.com";
+    const string smtp_password = "secret_word_228";
+    const string smtp_reciever = "vlad.grishkevich0503@gmail.com";
 
     var from_email = new MailAddress(smtp_account);
     var to_emal = new MailAddress(smtp_reciever);
@@ -18,7 +18,7 @@ static void SendEmail(string htmlString)
 
     var smtp = new SmtpClient
     {
-        Host = "smtp.yandex.com",
+        Host = "smtp.office365.com",
         Port = 587,
         EnableSsl = true,
         DeliveryMethod = SmtpDeliveryMethod.Network,
